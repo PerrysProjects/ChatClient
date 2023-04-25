@@ -17,9 +17,6 @@ public class Main extends JFrame {
     private JTextArea messageArea;
     private JTextField messageField;
 
-    private BufferedReader in;
-    private PrintWriter out;
-    private Socket socket;
 
     public Main() {
         super("Chat Client");
@@ -67,15 +64,10 @@ public class Main extends JFrame {
         }
 
         // Connect to server
-        try {
-            socket = new Socket(host, port);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(username);
+        if(Server.connect(host, port, username))
             messageArea.append("Connected to server on " + host + ":" + port + "\n");
-        } catch(Exception e) {
-            messageArea.append("Error connecting to server: " + e + "\n");
-        }
+        else
+            messageArea.append("Error connecting to server: " + Server.getError() + "\n");
 
         // Start a thread to read messages from the server
         Thread thread = new Thread(new Runnable() {
@@ -83,7 +75,7 @@ public class Main extends JFrame {
             public void run() {
                 try {
                     while(true) {
-                        String input = in.readLine();
+                        String input = Server.getIn().readLine();
                         if(input == null) {
                             break;
                         }
@@ -100,7 +92,7 @@ public class Main extends JFrame {
     private void sendMessage() {
         String message = messageField.getText().trim();
         if(!message.isEmpty()) {
-            out.println(message);
+            Server.getOut().println(message);
             messageField.setText("");
         }
     }
