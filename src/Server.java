@@ -1,4 +1,9 @@
+import messages.Emoji;
+import messages.Swear;
+import settings.Settings;
+
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -23,16 +28,22 @@ public class Server {
         }
     }
 
-    public static BufferedReader getIn() {
-        return in;
+    public static void sendMessage(String message) {
+        if(!message.isEmpty()) {
+            out.println(message);
+        }
     }
 
-    public static PrintWriter getOut() {
-        return out;
-    }
-
-    public static Socket getSocket() {
-        return socket;
+    public static String getMessage() {
+        try {
+            String message = in.readLine();
+            if(Settings.isSafeMode()) {
+                message = Swear.replaceSwears(message);
+            }
+            return Emoji.replaceEmojis(message);
+        } catch(IOException e) {
+            return new RuntimeException(e).toString();
+        }
     }
 
     public static Exception getError() {
