@@ -90,10 +90,10 @@ public class Main extends JFrame {
         safeModeItem.addActionListener(e -> {
             if(Settings.isSafeMode()) {
                 Settings.setSafeMode(false);
-                messageArea.append("SafeMode deactivated!");
+                messageArea.append("SafeMode deactivated!\n");
             } else {
                 Settings.setSafeMode(true);
-                messageArea.append("SafeMode activated!");
+                messageArea.append("SafeMode activated!\n");
             }
         });
         settingsMenu.add(safeModeItem);
